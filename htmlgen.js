@@ -41,6 +41,7 @@ let getELEM = function(nname,attrs,inner,style){
 
 //will be a version 2 overhaul, so everything will be different
 let ELEM = function(nname,attrs,inner,style){
+    let that = this;
     if(nname === "string"){
         this.e = document.createTextNode(inner);
         return;
@@ -73,6 +74,21 @@ let ELEM = function(nname,attrs,inner,style){
     };
     this.remove = function(){
         this.e.parentNode.removeChild(this.e);
+    };
+    this.on = function(evt){
+        let cbs = [];
+        for(let i = 0; i < arguments.length; i++){
+            let cb = arguments[i];
+            cbs.push(cb);
+            this.e.addEventListener(evt,cb);
+        }
+        return {
+            remove:function(){
+                for(let i = 0; i < cbs.length; i++){
+                    that.e.removeEventListener(evt,cbs[i]);
+                }
+            }
+        };
     };
     let that = this;
     Object.defineProperties(this, {
