@@ -90,7 +90,6 @@ let ELEM = function(nname,attrs,inner,style){
             }
         };
     };
-    let that = this;
     Object.defineProperties(this, {
         "children": {
              "get": ()=>that.e.children,
