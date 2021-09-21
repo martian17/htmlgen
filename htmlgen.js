@@ -77,7 +77,7 @@ let ELEM = function(nname,attrs,inner,style){
     };
     this.on = function(evt){
         let cbs = [];
-        for(let i = 0; i < arguments.length; i++){
+        for(let i = 1; i < arguments.length; i++){
             let cb = arguments[i];
             cbs.push(cb);
             this.e.addEventListener(evt,cb);
