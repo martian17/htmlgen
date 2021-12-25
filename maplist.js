@@ -190,5 +190,6 @@ MapList.prototype.pop = MapList.prototype.pop_back;
 
 
 //check if node and export module
-module = module || {};
-module.exports = MapList;
+if(typeof module !== "undefined"){
+    module.exports = MapList;
+}

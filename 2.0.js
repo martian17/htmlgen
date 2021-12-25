@@ -78,7 +78,7 @@ let ELEM = (()=>{
                     for(let i = 0; i < childNodes.length; i++){
                         let child = new ELEM(childNodes[i]);
                         if(!child)continue;//child creation failed (unsupported node type)
-                        child.setParent(this);
+                        child.parent = this;
                         this.children.push(child);
                     }
                 }else if(nname.nodeType === 3){//text
@@ -101,24 +101,23 @@ let ELEM = (()=>{
             });
             */
         }
-        setParent(paren){
-            this.remove();
-            this.parent = parent;
-        }
         setInner(inner){
+            console.log(inner);
             this.children.clear();
             this.e.innerHTML = inner;
             let childNodes = this.e.childNodes;
             for(let i = 0; i < childNodes.length; i++){
                 let child = new ELEM(childNodes[i]);
                 if(!child)continue;//child creation failed (unsupported node type)
-                child.setParent(this);
+                child.parent = this;
                 this.children.push(child);
             }
         }
         push_back(){
             let elem = getELEM.apply(null,[...arguments]);
-            elem.setParent(this);
+            console.log(elem);
+            elem.remove();
+            elem.parent = this;
             this.children.push(elem);
             this.e.appendChild(elem.e);
             return elem;
@@ -130,7 +129,8 @@ let ELEM = (()=>{
         }
         push_front(){
             let elem = getELEM.apply(null,[...arguments]);
-            elem.setParent(this);
+            elem.remove();
+            elem.parent = this;
             this.children.push(elem);
             this.e.appendChild(elem.e);
             return elem;
@@ -146,7 +146,7 @@ let ELEM = (()=>{
         remove(){
             if(this.parent){
                 this.parent.removeChild(this);//children is a linked list
-            }else{
+            }else if(this.e.parentNode){
                 console.log("Warning: removing an element through raw dom");
                 this.e.parentNode.removeChild(this.e);
             }
@@ -160,7 +160,8 @@ let ELEM = (()=>{
             if(elem2 instanceof ELEM){//inserting to the child
                 this.e.insertBefore(elem1.e,elem2.e);
                 this.children.insertBefore(elem1,elem2);
-                elem1.setParent(this);
+                elem1.remove();
+                elem1.parent = this;
             }else{//inserting to the siblings
                 let parent = this.parent;
                 if(!parent){
@@ -175,20 +176,17 @@ let ELEM = (()=>{
                 let next = this.children.getNext(elem1);
                 if(next === null){
                     //just push
-                    this.children.push(elem2);
-                    this.e.appendChild(elem2.e);
+                    this.push(elem2);
                 }else{
-                    this.e.insertBefore(elem2.e,next.e);
-                    this.children.insertBefore(elem2,next);
+                    this.insertBefore(elem2,next);
                 }
-                elem2.setParent(this);
             }else{//insert to sibling
                 let parent = this.parent;
                 if(!parent){
                     throw new Error("parent to the node not defined");
                 }
                 elem1 = getELEM.apply(null,[...arguments]);
-                parent.insertAfter(elem1,this);
+                parent.insertAfter(this,elem1);
             }
         }
         replace(elem,rep){
@@ -210,12 +208,14 @@ let ELEM = (()=>{
                     }
                 }
             };
-        };
+        }
     };
 
 
     //aliases
     ELEM.prototype.add = ELEM.prototype.push_back;
+    ELEM.prototype.push = ELEM.prototype.push_back;
+    ELEM.prototype.pop = ELEM.prototype.pop_back;
 
     return ELEM;
 })();
