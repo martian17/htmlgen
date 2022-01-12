@@ -53,7 +53,11 @@ let ELEM = (()=>{
                 return;
             }else if(typeof nname === "string"){
                 if(nname[0].match(/[a-z]/)){//is elem name
-                    this.e = document.createElement(nname);
+                    if(nname === "svg"){
+                        this.e = document.createElementNS("http://www.w3.org/2000/svg",nname);
+                    }else{
+                        this.e = document.createElement(nname);
+                    }
                 }else{
                     this.e = document.querySelector(nname);
                 }
