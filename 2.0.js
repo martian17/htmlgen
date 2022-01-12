@@ -106,7 +106,7 @@ let ELEM = (()=>{
             */
         }
         setInner(inner){
-            console.log(inner);
+            //console.log(inner);
             this.children.clear();
             this.e.innerHTML = inner;
             let childNodes = this.e.childNodes;
@@ -119,7 +119,7 @@ let ELEM = (()=>{
         }
         push_back(){
             let elem = getELEM.apply(null,[...arguments]);
-            console.log(elem);
+            //console.log(elem);
             elem.remove();
             elem.parent = this;
             this.children.push(elem);
@@ -212,6 +212,23 @@ let ELEM = (()=>{
                     }
                 }
             };
+        }
+        
+        getX(){
+            let e = this.e;
+            return e.offsetLeft;
+        }
+        getY(){
+            let e = this.e;
+            return e.offsetTop;
+        }
+        getWidth(){
+            let e = this.e;
+            return e.offsetWidth;
+        }
+        getHeight(){
+            let e = this.e;
+            return e.offsetHeight;
         }
     };
 
