@@ -147,6 +147,12 @@ let ELEM = (()=>{
         attr(a,b){
             this.e.setAttribute(a,b);
         }
+        style(str){
+            let e = this.e;
+            attrParser(str).map(([name,val])=>{
+                e.style[name] = val;
+            });
+        }
         remove(){
             if(this.parent){
                 this.parent.removeChild(this);//children is a linked list
@@ -225,11 +231,19 @@ let ELEM = (()=>{
                     for(let i = 0; i < cbs.length; i++){
                         that.e.removeEventListener(evt,cbs[i]);
                     }
+                    cbs = [];
                     cb(e);
                 }.bind(null,cb);
                 cbs.push(evtfunc);
                 this.e.addEventListener(evt,evtfunc);
             }
+            return {
+                remove:function(){
+                    for(let i = 0; i < cbs.length; i++){
+                        that.e.removeEventListener(evt,cbs[i]);
+                    }
+                }
+            };
         }
         
         getX(){
