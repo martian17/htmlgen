@@ -214,6 +214,21 @@ let ELEM = (()=>{
             };
         }
         
+        once(evt){
+            let that = this;
+            let cbs = [];
+            for(let i = 1; i < arguments.length; i++){
+                let cb = arguments[i];
+                cbs.push(cb);
+                ((cb)=>{
+                    this.e.addEventListener(evt,(e)=>{
+                        cbs.map(cbs, cb=>{that.e.removeEventListener(evt,cb);});
+                        cb(e);
+                    });
+                })(cb);
+            }
+        }
+        
         getX(){
             let e = this.e;
             return e.offsetLeft;
