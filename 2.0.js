@@ -217,15 +217,18 @@ let ELEM = (()=>{
         once(evt){
             let that = this;
             let cbs = [];
+            //console.log(evt,arguments);
             for(let i = 1; i < arguments.length; i++){
                 let cb = arguments[i];
-                cbs.push(cb);
-                ((cb)=>{
-                    this.e.addEventListener(evt,(e)=>{
-                        cbs.map(cbs, cb=>{that.e.removeEventListener(evt,cb);});
-                        cb(e);
-                    });
-                })(cb);
+                let evtfunc = function(cb,e){
+                    //console.log(cbs,cbs.map);
+                    for(let i = 0; i < cbs.length; i++){
+                        that.e.removeEventListener(evt,cbs[i]);
+                    }
+                    cb(e);
+                }.bind(null,cb);
+                cbs.push(evtfunc);
+                this.e.addEventListener(evt,evtfunc);
             }
         }
         
