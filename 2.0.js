@@ -147,6 +147,12 @@ let ELEM = (()=>{
         attr(a,b){
             this.e.setAttribute(a,b);
         }
+        style(str){
+            let e = this.e;
+            attrParser(str).map(([name,val])=>{
+                e.style[name] = val;
+            });
+        }
         remove(){
             if(this.parent){
                 this.parent.removeChild(this);//children is a linked list
@@ -214,13 +220,38 @@ let ELEM = (()=>{
             };
         }
         
-        
         style(str){//setting style
             let pairs = attrParser(str);
             let e = this.e;
             pairs.map(([sname,val])=>{
                 e.style[sname] = val;
             });
+        }
+        
+        once(evt){
+            let that = this;
+            let cbs = [];
+            //console.log(evt,arguments);
+            for(let i = 1; i < arguments.length; i++){
+                let cb = arguments[i];
+                let evtfunc = function(cb,e){
+                    //console.log(cbs,cbs.map);
+                    for(let i = 0; i < cbs.length; i++){
+                        that.e.removeEventListener(evt,cbs[i]);
+                    }
+                    cbs = [];
+                    cb(e);
+                }.bind(null,cb);
+                cbs.push(evtfunc);
+                this.e.addEventListener(evt,evtfunc);
+            }
+            return {
+                remove:function(){
+                    for(let i = 0; i < cbs.length; i++){
+                        that.e.removeEventListener(evt,cbs[i]);
+                    }
+                }
+            };
         }
         
         getX(){
