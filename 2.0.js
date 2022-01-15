@@ -214,6 +214,15 @@ let ELEM = (()=>{
             };
         }
         
+        
+        style(str){//setting style
+            let pairs = attrParser(str);
+            let e = this.e;
+            pairs.map(([sname,val])=>{
+                e.style[sname] = val;
+            });
+        }
+        
         getX(){
             let e = this.e;
             return e.offsetLeft;
