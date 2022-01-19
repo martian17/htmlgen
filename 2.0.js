@@ -66,7 +66,7 @@ let ELEM = (()=>{
                 }
                 let e = this.e;
                 if(attrs){
-                    attrParser(attrs).map((a)=>{
+                    this.attrParser(attrs).map((a)=>{
                         e.setAttribute(a[0],a[1]);
                     });
                 }
@@ -152,7 +152,7 @@ let ELEM = (()=>{
         }
         style(str){
             let e = this.e;
-            attrParser(str).map(([name,val])=>{
+            this.attrParser(str).map(([name,val])=>{
                 e.style[name] = val;
             });
         }
@@ -224,7 +224,7 @@ let ELEM = (()=>{
         }
         
         style(str){//setting style
-            let pairs = attrParser(str);
+            let pairs = this.attrParser(str);
             let e = this.e;
             pairs.map(([sname,val])=>{
                 e.style[sname] = val;
