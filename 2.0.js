@@ -33,10 +33,11 @@ let ELEM = (()=>{
 
 
     let getELEM = function(nname,attrs,inner,style){
-        if(nname.constructor === ELEM){//it's an ELEM
+        if(nname instanceof ELEM){//it's an ELEM
             return nname;
         }else{
-            return new ELEM(nname,attrs,inner,style);
+            
+            return new this.Child_Constructor(nname,attrs,inner,style);
         }
     };
 
@@ -45,6 +46,12 @@ let ELEM = (()=>{
     class ELEM{
         nodeType = 1;
         parent = null;
+        //exposing util functions
+        static attrParser = attrParser;
+        //for internal uses
+        Child_Constructor = ELEM;
+        attrParser = attrParser;
+        getELEM = getELEM;
         constructor(nname,attrs,inner,style){
             this.children = new MapList();
             if(nname === "text"){
@@ -53,11 +60,7 @@ let ELEM = (()=>{
                 return;
             }else if(typeof nname === "string"){
                 if(nname[0].match(/[a-z]/)){//is elem name
-                    if(nname === "svg"){
-                        this.e = document.createElementNS("http://www.w3.org/2000/svg",nname);
-                    }else{
-                        this.e = document.createElement(nname);
-                    }
+                    this.e = document.createElement(nname);
                 }else{
                     this.e = document.querySelector(nname);
                 }
@@ -80,7 +83,7 @@ let ELEM = (()=>{
                     this.e = nname;
                     let childNodes = nname.childNodes;
                     for(let i = 0; i < childNodes.length; i++){
-                        let child = new ELEM(childNodes[i]);
+                        let child = new this.Child_Constructor(childNodes[i]);
                         if(!child)continue;//child creation failed (unsupported node type)
                         child.parent = this;
                         this.children.push(child);
@@ -111,14 +114,14 @@ let ELEM = (()=>{
             this.e.innerHTML = inner;
             let childNodes = this.e.childNodes;
             for(let i = 0; i < childNodes.length; i++){
-                let child = new ELEM(childNodes[i]);
+                let child = new this.Child_Constructor(childNodes[i]);
                 if(!child)continue;//child creation failed (unsupported node type)
                 child.parent = this;
                 this.children.push(child);
             }
         }
         push_back(){
-            let elem = getELEM.apply(null,[...arguments]);
+            let elem = this.getELEM.apply(this,[...arguments]);
             //console.log(elem);
             elem.remove();
             elem.parent = this;
@@ -132,7 +135,7 @@ let ELEM = (()=>{
             return elem;
         }
         push_front(){
-            let elem = getELEM.apply(null,[...arguments]);
+            let elem = this.getELEM.apply(this,[...arguments]);
             elem.remove();
             elem.parent = this;
             this.children.push(elem);
@@ -177,7 +180,7 @@ let ELEM = (()=>{
                 if(!parent){
                     throw new Error("parent to the node not defined");
                 }
-                elem1 = getELEM.apply(null,[...arguments]);
+                elem1 = this.getELEM.apply(this,[...arguments]);
                 parent.insertBefore(this,elem1);
             }
         }
@@ -195,7 +198,7 @@ let ELEM = (()=>{
                 if(!parent){
                     throw new Error("parent to the node not defined");
                 }
-                elem1 = getELEM.apply(null,[...arguments]);
+                elem1 = this.getELEM.apply(this,[...arguments]);
                 parent.insertAfter(this,elem1);
             }
         }
