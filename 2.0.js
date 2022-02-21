@@ -22,7 +22,7 @@ let ELEM = (()=>{
                 attrs.push(attr);
             }
         }
-        attrs = attrs.filter((a)=>{
+        attrs = attrs.map(([an,av])=>[an.trim(),av.trim()]).filter((a)=>{
             if(a[0] === ""){
                 return false;
             }
