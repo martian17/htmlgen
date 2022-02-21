@@ -171,9 +171,9 @@ let ELEM = (()=>{
         }
         insertBefore(elem1,elem2){
             if(elem2 instanceof ELEM){//inserting to the child
+                elem1.remove();
                 this.e.insertBefore(elem1.e,elem2.e);
                 this.children.insertBefore(elem1,elem2);
-                elem1.remove();
                 elem1.parent = this;
             }else{//inserting to the siblings
                 let parent = this.parent;
@@ -272,6 +272,18 @@ let ELEM = (()=>{
         getHeight(){
             let e = this.e;
             return e.offsetHeight;
+        }
+        getNext(){
+            if(!this.parent){
+                throw new Error("unsupported operation: parent not registered");
+            }
+            return this.parent.children.getNext(this);
+        }
+        getPrev(){
+            if(!this.parent){
+                throw new Error("unsupported operation: parent not registered");
+            }
+            return this.parent.children.getPrev(this);
         }
     };
 
