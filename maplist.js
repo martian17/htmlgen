@@ -3,6 +3,10 @@ class MapList{
         this.objmap = new Map();
         this.head = null;
         this.tail = null;
+        this.length = 0;
+    }
+    get size(){
+        return this.objmap.size;
     }
     push_back(elem){
         if(this.has(elem))this.delete(elem);
