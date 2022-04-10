@@ -222,7 +222,8 @@ let ELEM = (()=>{
                     throw new Error("parent to the node not defined");
                 }
                 elem1 = this.getELEM.apply(this,[...arguments]);
-                parent.insertBefore(this,elem1);
+                parent.insertBefore(elem1,this);
+                return elem1;
             }
         }
         insertAfter(elem1,elem2){
