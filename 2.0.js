@@ -323,6 +323,27 @@ let ELEM = (()=>{
             }
             return this.parent.children.getPrev(this);
         }
+        getDescendent(e){
+            let chain = [];
+            while(e !== this.e){
+                chain.push(e);
+                e = e.parentNode;
+            }
+            let elem = this;
+            while(chain.length !== 0){
+                let e = chain.pop();
+                elem = elem.children.getInstance(e);
+            }
+            return elem;
+        }
+        query(query){
+            return this.getDescendent(this.e.querySelector(query));
+        }
+        queryAll(query){
+            let that = this;
+            return [...this.e.querySelectorAll(query)].map(e=>
+            this.getDescendent(e));
+        }
     };
 
 
