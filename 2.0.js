@@ -40,7 +40,45 @@ let ELEM = (()=>{
             return new this.Child_Constructor(nname,attrs,inner,style);
         }
     };
+    
+    
+    class ElemMap{
+        constructor(map){
+            this.emap = new Map();
+            this.objmap = new Map();
+        }
+        get size(){
+            return this.objmap.size;
+        }
+        set(elem,value){
+            this.emap.set(elem.e,elem);
+            return this.objmap.set(elem,value);
+        }
+        delete(elem){
+            this.emap.delete(elem.e);
+            return this.objmap.delete(elem);
+        }
+        clear(){
+            this.emap.clear();
+            return this.objmap.clear();
+        }
+        has(elem){
+            return this.objmap.has(elem);
+        }
+        get(){
+            return this.objmap.get(elem);
+        }
+    };
 
+    class ElemList extends MapList{
+        constructor(){
+            super();
+            super.objmap = new ElemMap(super.objmap);
+        }
+        getInstance(e){
+            return this.objmap.getInstance(e);
+        }
+    };
 
 
     class ELEM{
