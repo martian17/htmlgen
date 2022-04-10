@@ -342,7 +342,7 @@ let ELEM = (()=>{
         queryAll(query){
             let that = this;
             return [...this.e.querySelectorAll(query)].map(e=>
-            this.getDescendent(e));
+            that.getDescendent(e));
         }
     };
 
