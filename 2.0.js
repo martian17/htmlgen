@@ -65,8 +65,11 @@ let ELEM = (()=>{
         has(elem){
             return this.objmap.has(elem);
         }
-        get(){
+        get(elem){
             return this.objmap.get(elem);
+        }
+        getInstance(e){
+            return this.emap.get(e);
         }
     };
 
@@ -91,7 +94,7 @@ let ELEM = (()=>{
         attrParser = attrParser;
         getELEM = getELEM;
         constructor(nname,attrs,inner,style){
-            this.children = new MapList();
+            this.children = new ElemList();
             if(nname === "text"){
                 this.e = document.createTextNode(attrs);
                 this.nodeType = 3;//text node
