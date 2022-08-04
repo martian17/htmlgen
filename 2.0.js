@@ -160,6 +160,7 @@ let ELEM = (()=>{
                 child.parent = this;
                 this.children.push(child);
             }
+            return this;
         }
         push_back(){
             let elem = this.getELEM.apply(this,[...arguments]);
@@ -190,12 +191,14 @@ let ELEM = (()=>{
         }
         attr(a,b){
             this.e.setAttribute(a,b);
+            return this;
         }
         style(str){
             let e = this.e;
             this.attrParser(str).map(([name,val])=>{
                 e.style[name] = val;
             });
+            return this;
         }
         remove(){
             if(this.parent){
@@ -204,11 +207,13 @@ let ELEM = (()=>{
                 console.log("Warning: removing an element through raw dom");
                 this.e.parentNode.removeChild(this.e);
             }
+            return this;
         }
         removeChild(elem){
             this.children.delete(elem);
             this.e.removeChild(elem.e);
             elem.parent = null;
+            return this;
         }
         insertBefore(elem1,elem2){
             if(elem2 instanceof ELEM){//inserting to the child
@@ -216,6 +221,7 @@ let ELEM = (()=>{
                 this.e.insertBefore(elem1.e,elem2.e);
                 this.children.insertBefore(elem1,elem2);
                 elem1.parent = this;
+                return elem1;
             }else{//inserting to the siblings
                 let parent = this.parent;
                 if(!parent){
@@ -231,9 +237,9 @@ let ELEM = (()=>{
                 let next = this.children.getNext(elem1);
                 if(next === null){
                     //just push
-                    this.push(elem2);
+                    return this.push(elem2);
                 }else{
-                    this.insertBefore(elem2,next);
+                    return this.insertBefore(elem2,next);
                 }
             }else{//insert to sibling
                 let parent = this.parent;
@@ -241,12 +247,13 @@ let ELEM = (()=>{
                     throw new Error("parent to the node not defined");
                 }
                 elem1 = this.getELEM.apply(this,[...arguments]);
-                parent.insertAfter(this,elem1);
+                return parent.insertAfter(this,elem1);
             }
         }
         replace(elem,rep){
             this.insertAfter(elem,rep);
             elem.remove();
+            return rep;
         }
         on(evt){
             let that = this;
@@ -271,6 +278,7 @@ let ELEM = (()=>{
             pairs.map(([sname,val])=>{
                 e.style[sname] = val;
             });
+            return this;
         }
         
         once(evt){
