@@ -183,6 +183,24 @@ class MapList{
         });
         return arr;
     }
+    *loopRange(a,b){
+        let ref = this.objmap.get(a);
+        if(this.head === null)return;
+        while(ref !== null && ref.elem !== b){
+            let next = ref.next;//in case ref gets deleted
+            yield ref.elem;
+            ref = next;
+        }
+    }
+    loop(){
+        return this.loopRange(this.getHead(),null);
+    }
+    loopUntil(elem){
+        return this.loopRange(this.getHead(),elem);
+    }
+    loopFrom(elem){
+        return this.loopRange(elem,null);
+    }
 };
 
 
