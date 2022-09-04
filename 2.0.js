@@ -356,6 +356,9 @@ let ELEM = (()=>{
             return [...this.e.querySelectorAll(query)].map(e=>
             that.getDescendent(e));
         }
+        get rect(){
+            return this.e.getBoundingClientRect();
+        }
     };
 
 
