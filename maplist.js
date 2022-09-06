@@ -201,6 +201,18 @@ class MapList{
     loopFrom(elem){
         return this.loopRange(elem,null);
     }
+    [Symbol.iterator]() {
+        let ref = this.head;
+
+        return {
+            next: () => {
+                if(ref === null)return {done: true};
+                let ref0 = ref;
+                ref = ref.next;
+                return { value: ref0.elem, done: false};
+            }
+        };
+    }
 };
 
 
