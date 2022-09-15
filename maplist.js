@@ -183,9 +183,21 @@ class MapList{
         });
         return arr;
     }
+    [Symbol.iterator]() {
+        let ref = this.head;
+
+        return {
+            next: () => {
+                if(ref === null)return {done: true};
+                let ref0 = ref;
+                ref = ref.next;
+                return { value: ref0.elem, done: false};
+            }
+        };
+    }
     *loopRange(a,b){
-        let ref = this.objmap.get(a);
         if(this.head === null)return;
+        let ref = this.objmap.get(a);
         while(ref !== null && ref.elem !== b){
             let next = ref.next;//in case ref gets deleted
             yield ref.elem;
@@ -201,17 +213,24 @@ class MapList{
     loopFrom(elem){
         return this.loopRange(elem,null);
     }
-    [Symbol.iterator]() {
-        let ref = this.head;
-
-        return {
-            next: () => {
-                if(ref === null)return {done: true};
-                let ref0 = ref;
-                ref = ref.next;
-                return { value: ref0.elem, done: false};
-            }
-        };
+    //reverse loops
+    *loopReverseRange(a,b){
+        if(this.head === null)return;
+        let ref = this.objmap.get(a);
+        while(ref !== null && ref.elem !== b){
+            let prev = ref.prev;//in case ref gets deleted
+            yield ref.elem;
+            ref = prev;
+        }
+    }
+    loopReverse(){
+        return this.loopReverseRange(this.getTail(),null);
+    }
+    loopReverseUntil(elem){
+        return this.loopReverseRange(this.getTail(),elem);
+    }
+    loopReverseFrom(elem){
+        return this.loopReverseRange(elem,null);
     }
 };
 
