@@ -250,10 +250,19 @@ let ELEM = (()=>{
                 return parent.insertAfter(this,elem1);
             }
         }
-        replace(elem,rep){
+        replaceChild(elem,rep){
             this.insertAfter(elem,rep);
             elem.remove();
             return rep;
+        }
+        replaceInPlace(elem){
+            if(this.parent){
+                this.parent.replaceChild(this,elem);
+            }else{
+                elem.remove();
+                this.parent.removeElement(this.e);
+                this.parent.appendChild(elem.e);
+            }
         }
         on(evt){
             let that = this;
