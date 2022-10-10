@@ -368,6 +368,12 @@ let ELEM = (()=>{
         get rect(){
             return this.e.getBoundingClientRect();
         }
+        get prev(){
+            return this.getPrev();
+        }
+        get next(){
+            return this.getNext();
+        }
     };
 
 
