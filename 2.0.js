@@ -100,7 +100,7 @@ let ELEM = (()=>{
                 this.nodeType = 3;//text node
                 return;
             }else if(typeof nname === "string"){
-                if(nname[0].match(/[a-z]/)){//is elem name
+                if(nname[0].match(/[a-zA-Z]/)){//is elem name
                     this.e = document.createElement(nname);
                 }else{
                     this.e = document.querySelector(nname);
