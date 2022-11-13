@@ -180,8 +180,12 @@ let ELEM = (()=>{
             let elem = this.getELEM.apply(this,[...arguments]);
             elem.remove();
             elem.parent = this;
-            this.children.push(elem);
-            this.e.appendChild(elem.e);
+            this.children.push_front(elem);
+            if(this.e.children.length === 0){
+                this.e.appendChild(elem.e);
+            }else{
+                this.e.insertBefore(elem.e,this.e.children[0]);
+            }
             return elem;
         }
         pop_front(){
