@@ -374,6 +374,9 @@ let ELEM = (()=>{
         get next(){
             return this.getNext();
         }
+		get child(){
+			return this.children.getHead();
+		}
     };
 
 
