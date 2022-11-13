@@ -232,6 +232,16 @@ class MapList{
     loopReverseFrom(elem){
         return this.loopReverseRange(elem,null);
     }
+    getNth(n){
+        if(n >= this.size || n < 0){
+            return null;
+        }
+        let ref = this.head;
+        for(let i = 0; i < n; i++){
+            ref = ref.next
+        }
+        return ref.elem;
+    }
 };
 
 
