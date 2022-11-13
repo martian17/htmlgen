@@ -374,8 +374,11 @@ let ELEM = (()=>{
         get next(){
             return this.getNext();
         }
-		get child(){
+		get head(){
 			return this.children.getHead();
+		}
+		get tail(){
+			return this.children.getTail();
 		}
     };
 
