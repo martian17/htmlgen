@@ -268,6 +268,17 @@ let ELEM = (()=>{
                 this.parent.appendChild(elem.e);
             }
         }
+        
+        on(evt,cb){
+            this.e.addEventListener(evt,cb);
+            return cb;
+        }
+        off(evt,cb){
+            this.e.removeEventListener(evt,cb);
+            return cb;
+        }
+        
+        /*
         on(evt){
             let that = this;
             let cbs = [];
@@ -284,6 +295,7 @@ let ELEM = (()=>{
                 }
             };
         }
+        */
         
         style(str){//setting style
             let pairs = this.attrParser(str);
