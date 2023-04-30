@@ -1,4 +1,4 @@
-import {MapList} from "./maplist.mjs";
+import {MapList} from "./maplist.js";
 
 let attrParser = function(str){
     //escape ":" and ";"

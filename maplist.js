@@ -1,4 +1,4 @@
-class MapList{
+export class MapList{
     constructor(){
         this.objmap = new Map();
         this.head = null;
@@ -250,9 +250,3 @@ MapList.prototype.push = MapList.prototype.push_back;
 MapList.prototype.pop = MapList.prototype.pop_back;
 
 
-
-
-//check if node and export module
-if(typeof module !== "undefined"){
-    module.exports = MapList;
-}

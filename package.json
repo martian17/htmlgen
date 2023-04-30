@@ -1,0 +1,16 @@
+{
+  "name": "htmlgen",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Minimalistic client side GUI framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/test.maplist.js"
+  },
+  "imports": {
+    "#root/*": "./*"
+  },
+  "keywords": ["framework", "html", "javascript", "css", "dynamic"],
+  "author": "Yutaro Yoshii",
+  "license": "ISC"
+}

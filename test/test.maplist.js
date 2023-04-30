@@ -1,4 +1,4 @@
-let MapList = require("./maplist.js");
+import {MapList} from "#root/maplist.js";
 
 /*
 methods
