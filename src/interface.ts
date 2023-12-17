@@ -1,0 +1,9 @@
+export type DOM_Element               = Element;
+export type DOM_Attr                  = Attr;
+export type DOM_Text                  = Text;
+export type DOM_CDATASection          = CDATASection;
+export type DOM_ProcessingInstruction = ProcessingInstruction;
+export type DOM_Comment               = Comment;
+export type DOM_Document              = Document;
+export type DOM_DocumentType          = DocumentType;
+export type DOM_DocumentFragment      = DocumentFragment;

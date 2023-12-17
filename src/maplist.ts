@@ -1,16 +1,20 @@
-export class MapList{
-    constructor(){
-        this.objmap = new Map();
-        this.head = null;
-        this.tail = null;
-        this.length = 0;
-    }
+type Ref<Elem> = {
+    prev: Ref<Elem> | null;
+    next: Ref<Elem> | null;
+    elem: Elem;
+};
+
+export class MapList<Elem>{
+    objmap = new Map<Elem,Ref<Elem>>;
+    head: Ref<Elem> | null = null;
+    tail: Ref<Elem> | null = null;
+    length = 0;
     get size(){
         return this.objmap.size;
     }
-    push_back(elem){
+    push_back(elem: Elem){
         if(this.has(elem))this.delete(elem);
-        let ref = {
+        let ref: Ref<Elem> = {
             prev:null,
             next:null,
             elem
@@ -29,38 +33,38 @@ export class MapList{
         let tail = this.tail;
         if(tail === null){
             console.log("warning: trying to pop an empty list");
-            return false;
+            return undefined;
         }
         this.tail = tail.prev;
-        this.tail.next = null;
+        if(this.tail !== null)this.tail.next = null;
         //gj garbage collector
         this.objmap.delete(tail.elem);
         return tail.elem;
     }
-    push_front(elem){
+    push_front(elem: Elem){
         if(this.has(elem))this.delete(elem);
         console.log("inserting front: ",elem);
         if(this.head === null){
-            this.push(elem);
+            this.push_back(elem);
         }else{
             this.insertBefore(elem,this.head.elem);
         }
     }
     pop_front(){
         if(this.head === null){
-            return null;
+            return undefined;
         }else{
             let h = this.head.elem;
             this.delete(h);
             return h;
         }
     }
-    delete(elem){
+    delete(elem: Elem){
         if(!this.objmap.has(elem)){
             console.log("warning: trying to delete an empty element");
-            return false;
+            return;
         }
-        let ref = this.objmap.get(elem);
+        let ref = this.objmap.get(elem) as Ref<Elem>;
         if(ref.prev === null){//replacing the head
             this.head = ref.next;
         }else{
@@ -73,48 +77,48 @@ export class MapList{
         }
         this.objmap.delete(elem);
     }
-    has(elem){
+    has(elem: Elem){
         return this.objmap.has(elem);
     }
-    getNext(elem){
+    getNext(elem: Elem){
         if(!this.objmap.has(elem)){
             throw new Error("Error: trying to get an element that does not exist");
         }
-        let ref = this.objmap.get(elem);
-        if(ref.next === null)return null;
+        let ref = this.objmap.get(elem) as Ref<Elem>;
+        if(ref.next === null)return undefined;
         return ref.next.elem;
     }
-    getPrev(elem){
+    getPrev(elem: Elem){
         if(!this.objmap.has(elem)){
             throw new Error("Error: trying to get an element that does not exist");
         }
-        let ref = this.objmap.get(elem);
-        if(ref.prev === null)return null;
+        let ref = this.objmap.get(elem) as Ref<Elem>;
+        if(ref.prev === null)return undefined;
         return ref.prev.elem;
     }
     getHead(){
         if(this.head === null){
-            return null;
+            return undefined;
         }
         return this.head.elem;
     }
     getTail(){
         if(this.tail === null){
-            return null;
+            return undefined;
         }
         return this.tail.elem;
     }
-    insertBefore(elem1,elem2){//elem1 is the new node
+    insertBefore(elem1: Elem, elem2: Elem){//elem1 is the new node
         if(!this.objmap.has(elem2)){
             console.log("warning: trying to insert before a non-member element");
-            return false;
+            return;
         }
         if(elem1 === elem2){
             console.log("Warning: trying to insert before itself");
-            return false;
+            return;
         }
         if(this.has(elem1))this.delete(elem1);
-        let ref2 = this.objmap.get(elem2);
+        let ref2 = this.objmap.get(elem2) as Ref<Elem>;
         let ref1 = {
             prev:ref2.prev,
             next:ref2,
@@ -130,17 +134,17 @@ export class MapList{
             ref0.next = ref1;
         }
     }
-    insertAfter(elem1,elem2){//elem2 is the new node
+    insertAfter(elem1: Elem, elem2: Elem){//elem2 is the new node
         if(!this.objmap.has(elem1)){
             console.log("warning: trying to insert after a non-member element");
-            return false;
+            return;
         }
         if(elem1 === elem2){
             console.log("Warning: trying to insert after itself");
-            return false;
+            return;
         }
         if(this.has(elem2))this.delete(elem2);
-        let ref1 = this.objmap.get(elem1);
+        let ref1 = this.objmap.get(elem1) as Ref<Elem>;
         let ref2 = {
             prev:ref1,
             next:ref1.next,
@@ -156,7 +160,7 @@ export class MapList{
             ref3.prev = ref2;
         }
     }
-    foreach(cb){
+    foreach(cb: (elem: Elem)=>unknown){
         let ref = this.head;
         while(ref !== null){
             let next = ref.next;//in case ref gets deleted
@@ -169,15 +173,18 @@ export class MapList{
         this.tail = null;
         this.objmap.clear();
     }
-    replace(elem,rep){
+    replace(elem: Elem, rep: Elem){
         let ref = this.objmap.get(elem);
+        if(!ref){
+            throw new Error("element does not exist");
+        }
         ref.elem = rep;
         this.objmap.delete(elem);
         this.objmap.set(rep,ref);
         return elem;
     }
     toArray(){
-        let arr = [];
+        let arr: Elem[] = [];
         this.foreach((elem)=>{
             arr.push(elem);
         });
@@ -195,58 +202,67 @@ export class MapList{
             }
         };
     }
-    *loopRange(a,b){
+    *loopRange(a?: Elem, b?: Elem){
+        if(!a)return;
         if(this.head === null)return;
-        let ref = this.objmap.get(a);
-        while(ref !== null && ref.elem !== b){
+        let ref : Ref<Elem> | null | undefined = this.objmap.get(a);
+        while(ref && ref.elem !== b){
+            // @ts-ignore Typescript assumes wrong type
             let next = ref.next;//in case ref gets deleted
             yield ref.elem;
             ref = next;
         }
     }
     loop(){
-        return this.loopRange(this.getHead(),null);
+        return this.loopRange(this.getHead());
     }
-    loopUntil(elem){
+    loopUntil(elem: Elem){
         return this.loopRange(this.getHead(),elem);
     }
-    loopFrom(elem){
-        return this.loopRange(elem,null);
+    loopFrom(elem: Elem){
+        return this.loopRange(elem);
     }
     //reverse loops
-    *loopReverseRange(a,b){
+    *loopReverseRange(a?: Elem, b?: Elem){
+        if(!a)return;
         if(this.head === null)return;
-        let ref = this.objmap.get(a);
-        while(ref !== null && ref.elem !== b){
+        let ref: Ref<Elem> | null | undefined = this.objmap.get(a);
+        while(ref && ref.elem !== b){
+            // @ts-ignore Typescript assumes wrong type
             let prev = ref.prev;//in case ref gets deleted
             yield ref.elem;
             ref = prev;
         }
     }
     loopReverse(){
-        return this.loopReverseRange(this.getTail(),null);
+        return this.loopReverseRange(this.getTail());
     }
-    loopReverseUntil(elem){
+    loopReverseUntil(elem: Elem){
         return this.loopReverseRange(this.getTail(),elem);
     }
-    loopReverseFrom(elem){
-        return this.loopReverseRange(elem,null);
+    loopReverseFrom(elem: Elem){
+        return this.loopReverseRange(elem);
     }
-    getNth(n){
+    getNth(n: number){
         if(n >= this.size || n < 0){
-            return null;
+            return undefined;
         }
         let ref = this.head;
         for(let i = 0; i < n; i++){
+            if(!ref)return;
             ref = ref.next
         }
+        if(!ref)return;
         return ref.elem;
+    }
+    // Aliases
+    push(elem: Elem){
+        this.push_back(elem);
+    }
+    pop(){
+        this.pop_back();
     }
 };
 
-
-//aliases
-MapList.prototype.push = MapList.prototype.push_back;
-MapList.prototype.pop = MapList.prototype.pop_back;
 
 

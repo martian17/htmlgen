@@ -1,16 +1,30 @@
 {
   "name": "htmlgen",
   "type": "module",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Minimalistic client side GUI framework",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "node test/test.maplist.js"
+    "test": "node test/test.maplist.js",
+    "build": "npx tsc"
   },
   "imports": {
-    "#root/*": "./*"
+    "#root/*": "./dist/*"
   },
-  "keywords": ["framework", "html", "javascript", "css", "dynamic"],
+  "keywords": [
+    "framework",
+    "html",
+    "javascript",
+    "css",
+    "dynamic"
+  ],
   "author": "Yutaro Yoshii",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
 }
