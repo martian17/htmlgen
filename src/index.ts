@@ -431,6 +431,12 @@ export class ELEM extends BaseELEM{
     pop(){
         return this.pop_back();        
     }
+    class(classname: string){
+        this.e.classList.add(classname);
+    }
+    id(id: string){
+        this.attr("id",id);
+    }
 }
 
 export const CSS = {

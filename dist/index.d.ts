@@ -64,6 +64,7 @@ export declare class ELEM extends BaseELEM {
     parent: ELEM | null;
     e: HTMLElement;
     children: ELEMList;
+    constructor(nname?: string, attrs?: AttrObject, inner?: string, style?: StyleObject);
     static create(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): ELEM;
     setAttrs(attrs: AttrObject): void;
     setStyle(style: StyleObject): void;
@@ -101,8 +102,8 @@ export declare class ELEM extends BaseELEM {
     getNext(): BaseELEM | undefined;
     getPrev(): BaseELEM | undefined;
     getDescendent(e: Node): BaseELEM;
-    query(query: string): BaseELEM | undefined;
-    queryAll(query: string): BaseELEM[];
+    query(query: string): ELEM | undefined;
+    queryAll(query: string): ELEM[];
     get rect(): DOMRect;
     get prev(): BaseELEM | undefined;
     get next(): BaseELEM | undefined;
@@ -115,6 +116,8 @@ export declare class ELEM extends BaseELEM {
     push(e: Node): BaseELEM;
     push(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
     pop(): BaseELEM | undefined;
+    class(classname: string): void;
+    id(id: string): void;
 }
 export declare const CSS: {
     css: string;

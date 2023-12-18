@@ -157,13 +157,21 @@ class ELEMList extends MapList {
     }
 }
 export class ELEM extends BaseELEM {
-    constructor() {
-        super(...arguments);
+    constructor(nname, attrs, inner, style) {
+        super();
         this.nodeType = 1;
         this.parent = null;
         this.children = new ELEMList;
+        if (!nname)
+            return;
+        this.e = document.createElement(nname);
+        if (attrs)
+            this.setAttrs(attrs);
+        if (inner)
+            this.setInner(inner);
+        if (style)
+            this.setStyle(style);
     }
-    // constructor will be hidden
     static create(nname, attrs, inner, style) {
         const elem = new ELEM;
         elem.e = document.createElement(nname);
@@ -424,6 +432,12 @@ export class ELEM extends BaseELEM {
     }
     pop() {
         return this.pop_back();
+    }
+    class(classname) {
+        this.e.classList.add(classname);
+    }
+    id(id) {
+        this.attr("id", id);
     }
 }
 export const CSS = {
