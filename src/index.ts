@@ -392,12 +392,12 @@ export class ELEM extends BaseELEM{
     query(query: string){
         const e = this.e.querySelector(query);
         if(!e)return undefined;
-        return this.getDescendent(e);
+        return this.getDescendent(e) as ELEM;
     }
     queryAll(query: string){
         let that = this;
         return [...this.e.querySelectorAll(query)].map(e=>
-        that.getDescendent(e));
+        that.getDescendent(e)) as ELEM[];
     }
     get rect(){
         return this.e.getBoundingClientRect();
