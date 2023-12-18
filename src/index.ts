@@ -147,7 +147,14 @@ export class ELEM extends BaseELEM{
     parent: ELEM | null = null;
     e!: HTMLElement;
     children = new ELEMList;
-    // constructor will be hidden
+    constructor(nname?: string, attrs?: AttrObject, inner?: string, style?: StyleObject){
+        super();
+        if(!nname)return;
+        this.e = document.createElement(nname);
+        if(attrs)this.setAttrs(attrs);
+        if(inner)this.setInner(inner);
+        if(style)this.setStyle(style);
+    }
     static create(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject){
         const elem = new ELEM;
         elem.e = document.createElement(nname);
