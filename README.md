@@ -1,6 +1,6 @@
 # HTMLGen - A JavaScript centered DOM library
 This is a light weight DOM wrapper library that was created to speed up web development. 
-It is intended to be as low level as possible, while providing shortcuts and consice syntax to 
+It is intended to be as low level as possible, while providing shortcuts and concise syntax to 
 seamlessly incorporate HTML elements into your JavaScript logic (and yes, not the other way around).  
 
 ## Memory integrity over Reactivity
