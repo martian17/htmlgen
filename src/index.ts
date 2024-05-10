@@ -21,11 +21,27 @@ type AttrObject = {
 
 type Callback = (...a: any) => any;
 
+type NodeTypes = HTMLElement | DOM_Attr | DOM_Text | DOM_CDATASection | DOM_ProcessingInstruction | DOM_Comment | DOM_Document | DOM_DocumentType | DOM_DocumentFragment | Node;
+
+type NodeTypeMap<T extends NodeTypes> = 
+    T extends HTMLElement ? ELEM :
+    T extends DOM_Attr ? AttributeELEM :
+    T extends DOM_Text ? TextELEM :
+    T extends DOM_CDATASection ? DataSectionELEM :
+    T extends DOM_ProcessingInstruction ? ProcessingInstructionELEM :
+    T extends DOM_Comment ? CommentELEM :
+    T extends DOM_Document ? DocumentELEM :
+    T extends DOM_DocumentType ? DocumentTypeELEM :
+    T extends DOM_DocumentFragment ? DocumentFragmentELEM :
+    BaseELEM;
+
+type Falsy = false | 0 | "" | null | undefined;
+
 export class BaseELEM{
     nodeType!: number;
     parent: ELEM | null = null;
     e!: Node;
-    static fromElement(e: Node){
+    static fromElement<T extends Node>(e: T): NodeTypeMap<T>{
         if(this === BaseELEM){
             let elem;
             switch(e.nodeType){
@@ -49,6 +65,7 @@ export class BaseELEM{
                     (elem as ELEM).children.push(BaseELEM.fromElement(child));
                 }
             }
+            // @ts-ignore:
             return elem;
         }
         const elem = new this;
@@ -58,6 +75,7 @@ export class BaseELEM{
                 elem.children.push(BaseELEM.fromElement(child));
             }
         }
+        // @ts-ignore:
         return elem;
     }
     remove(){
@@ -124,7 +142,10 @@ export class NotationELEM extends BaseELEM{
     nodeType = 12;
 }
 
-export const getELEM = function(nname: string | BaseELEM | Node, attrs?: AttrObject, inner?: string, style?: StyleObject){
+function getELEM<T extends BaseELEM>(elem: T): T;
+function getELEM<T extends Node>(elem: T): NodeTypeMap<T>;
+function getELEM(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
+function getELEM(nname: any, attrs?: any, inner?: any, style?: any){
     if(nname instanceof BaseELEM)
         return nname;
     if(typeof nname === "string")
@@ -147,7 +168,7 @@ export class ELEM extends BaseELEM{
     parent: ELEM | null = null;
     e!: HTMLElement;
     children = new ELEMList;
-    constructor(nname?: string, attrs?: AttrObject, inner?: string, style?: StyleObject){
+    constructor(nname?: string | Falsy, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy){
         super();
         if(!nname)return;
         this.e = document.createElement(nname);
@@ -155,7 +176,7 @@ export class ELEM extends BaseELEM{
         if(inner)this.setInner(inner);
         if(style)this.setStyle(style);
     }
-    static create(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject){
+    static create(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy){
         const elem = new ELEM;
         elem.e = document.createElement(nname);
         if(attrs)elem.setAttrs(attrs);
@@ -167,12 +188,14 @@ export class ELEM extends BaseELEM{
         for(let key in attrs){
             this.e.setAttribute(key,attrs[key]);
         }
+        return this;
     }
     setStyle(style: StyleObject){
         for(let key in style){
             // @ts-ignore: style attribute
             this.e.style[key] = style[key];
         }
+        return this;
     }
     setInner(inner: string){
         this.children.clear();
@@ -186,9 +209,9 @@ export class ELEM extends BaseELEM{
         }
         return this;
     }
-    push_back(elem: BaseELEM): BaseELEM;
-    push_back(e: Node): BaseELEM;
-    push_back(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    push_back<T extends BaseELEM>(elem: T): T;
+    push_back<T extends Node>(elem: T): NodeTypeMap<T>;
+    push_back(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     push_back(a?: any, b?: any, c?: any, d?: any){
         const elem = getELEM(a,b,c,d);
         elem.remove();
@@ -202,9 +225,9 @@ export class ELEM extends BaseELEM{
         elem?.remove();
         return elem;
     }
-    push_front(elem: BaseELEM): BaseELEM;
-    push_front(e: Node): BaseELEM;
-    push_front(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    push_front<T extends BaseELEM>(elem: T): T;
+    push_front<T extends Node>(elem: T): NodeTypeMap<T>;
+    push_front(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     push_front(a?: any, b?: any, c?: any, d?: any){
         const elem = getELEM(a,b,c,d);
         elem.remove();
@@ -225,7 +248,7 @@ export class ELEM extends BaseELEM{
     attr(key: string | AttrObject, value: string){
         if(typeof key !== "string"){
             this.setAttrs(key);
-            return;
+            return this;
         }
         this.e.setAttribute(key, value);
         return this;
@@ -233,10 +256,11 @@ export class ELEM extends BaseELEM{
     style(key: string | StyleObject, value: string){
         if(typeof key !== "string"){
             this.setStyle(key);
-            return;
+            return this;
         }
         // @ts-ignore: style attribute
         this.e.style[key] = value;
+        return this;
     }
     removeChild(elem: BaseELEM){
         this.children.delete(elem);
@@ -244,10 +268,10 @@ export class ELEM extends BaseELEM{
         elem.parent = null;
         return this;
     }
-    insertBefore(elem1: BaseELEM, elem2: BaseELEM): BaseELEM;
-    insertBefore(elem: BaseELEM): BaseELEM;
-    insertBefore(e: Node): BaseELEM;
-    insertBefore(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    insertBefore<T extends BaseELEM>(newNode: T, reference: BaseELEM): T;
+    insertBefore<T extends BaseELEM>(elem: T): T;
+    insertBefore<T extends Node>(elem: T): NodeTypeMap<T>;
+    insertBefore(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     insertBefore(a?: any, b?: any, c?: any, d?: any){
         if(b instanceof BaseELEM){
             const elem1 = a;
@@ -267,10 +291,10 @@ export class ELEM extends BaseELEM{
             return elem1;
         }
     }
-    insertAfter(elem1: BaseELEM, elem2: BaseELEM): BaseELEM;
-    insertAfter(elem: BaseELEM): BaseELEM;
-    insertAfter(e: Node): BaseELEM;
-    insertAfter(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    insertAfter<T extends BaseELEM>(reference: BaseELEM, newNode: T): T;
+    insertAfter<T extends BaseELEM>(elem: T): T;
+    insertAfter<T extends Node>(elem: T): NodeTypeMap<T>;
+    insertAfter(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     insertAfter(a?: any, b?: any, c?: any, d?: any){
         if(b instanceof BaseELEM){
             const elem1 = a;
@@ -291,21 +315,22 @@ export class ELEM extends BaseELEM{
             return parent.insertAfter(this,elem1);
         }
     }
-    replaceChild(elem: BaseELEM, rep: BaseELEM){
+    replaceChild<T extends BaseELEM>(elem: BaseELEM, rep: T): T{
         this.insertAfter(elem,rep);
         elem.remove();
         return rep;
     }
-    replaceInPlace(elem: BaseELEM){
+    replaceInPlace<T extends BaseELEM>(elem: T): T{
         if(this.parent){
             this.parent.replaceChild(this,elem);
         }else{
             elem.remove();
             const parent = this.e.parentNode;
-            if(!parent)return;
+            if(!parent)return elem;
             parent.removeChild(this.e);
             parent.appendChild(elem.e);
         }
+        return elem;
     }
     
     on(evt: string, cb: Callback){
@@ -416,15 +441,15 @@ export class ELEM extends BaseELEM{
     }
 
     // aliases
-    add(elem: BaseELEM): BaseELEM;
-    add(e: Node): BaseELEM;
-    add(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    add<T extends BaseELEM>(elem: T): T;
+    add<T extends Node>(elem: T): NodeTypeMap<T>;
+    add(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     add(a?: any, b?: any, c?: any, d?: any){
         return this.push_back(a,b,c,d);
     }
-    push(elem: BaseELEM): BaseELEM;
-    push(e: Node): BaseELEM;
-    push(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    push<T extends BaseELEM>(elem: T): T;
+    push<T extends Node>(elem: T): NodeTypeMap<T>;
+    push(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     push(a?: any, b?: any, c?: any, d?: any){
         return this.push_back(a,b,c,d);
     }
@@ -433,9 +458,11 @@ export class ELEM extends BaseELEM{
     }
     class(classname: string){
         this.e.classList.add(classname);
+        return this;
     }
     id(id: string){
         this.attr("id",id);
+        return this;
     }
 }
 

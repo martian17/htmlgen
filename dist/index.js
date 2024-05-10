@@ -51,6 +51,7 @@ export class BaseELEM {
                     elem.children.push(BaseELEM.fromElement(child));
                 }
             }
+            // @ts-ignore:
             return elem;
         }
         const elem = new this;
@@ -60,6 +61,7 @@ export class BaseELEM {
                 elem.children.push(BaseELEM.fromElement(child));
             }
         }
+        // @ts-ignore:
         return elem;
     }
     remove() {
@@ -140,13 +142,14 @@ export class NotationELEM extends BaseELEM {
         this.nodeType = 12;
     }
 }
-export const getELEM = function (nname, attrs, inner, style) {
+function getELEM(nname, attrs, inner, style) {
     if (nname instanceof BaseELEM)
         return nname;
     if (typeof nname === "string")
         return ELEM.create(nname, attrs, inner, style);
     return BaseELEM.fromElement(nname);
-};
+}
+;
 class ELEMList extends MapList {
     getInstance(e) {
         for (let child of this.loop()) {
@@ -187,12 +190,14 @@ export class ELEM extends BaseELEM {
         for (let key in attrs) {
             this.e.setAttribute(key, attrs[key]);
         }
+        return this;
     }
     setStyle(style) {
         for (let key in style) {
             // @ts-ignore: style attribute
             this.e.style[key] = style[key];
         }
+        return this;
     }
     setInner(inner) {
         this.children.clear();
@@ -241,7 +246,7 @@ export class ELEM extends BaseELEM {
     attr(key, value) {
         if (typeof key !== "string") {
             this.setAttrs(key);
-            return;
+            return this;
         }
         this.e.setAttribute(key, value);
         return this;
@@ -249,10 +254,11 @@ export class ELEM extends BaseELEM {
     style(key, value) {
         if (typeof key !== "string") {
             this.setStyle(key);
-            return;
+            return this;
         }
         // @ts-ignore: style attribute
         this.e.style[key] = value;
+        return this;
     }
     removeChild(elem) {
         this.children.delete(elem);
@@ -315,10 +321,11 @@ export class ELEM extends BaseELEM {
             elem.remove();
             const parent = this.e.parentNode;
             if (!parent)
-                return;
+                return elem;
             parent.removeChild(this.e);
             parent.appendChild(elem.e);
         }
+        return elem;
     }
     on(evt, cb) {
         this.e.addEventListener(evt, cb);
@@ -435,9 +442,11 @@ export class ELEM extends BaseELEM {
     }
     class(classname) {
         this.e.classList.add(classname);
+        return this;
     }
     id(id) {
         this.attr("id", id);
+        return this;
     }
 }
 export const CSS = {

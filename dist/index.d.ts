@@ -7,11 +7,14 @@ type AttrObject = {
     [key: string]: string;
 };
 type Callback = (...a: any) => any;
+type NodeTypes = HTMLElement | DOM_Attr | DOM_Text | DOM_CDATASection | DOM_ProcessingInstruction | DOM_Comment | DOM_Document | DOM_DocumentType | DOM_DocumentFragment | Node;
+type NodeTypeMap<T extends NodeTypes> = T extends HTMLElement ? ELEM : T extends DOM_Attr ? AttributeELEM : T extends DOM_Text ? TextELEM : T extends DOM_CDATASection ? DataSectionELEM : T extends DOM_ProcessingInstruction ? ProcessingInstructionELEM : T extends DOM_Comment ? CommentELEM : T extends DOM_Document ? DocumentELEM : T extends DOM_DocumentType ? DocumentTypeELEM : T extends DOM_DocumentFragment ? DocumentFragmentELEM : BaseELEM;
+type Falsy = false | 0 | "" | null | undefined;
 export declare class BaseELEM {
     nodeType: number;
     parent: ELEM | null;
     e: Node;
-    static fromElement(e: Node): BaseELEM;
+    static fromElement<T extends Node>(e: T): NodeTypeMap<T>;
     remove(): this;
 }
 export declare class AttributeELEM extends BaseELEM {
@@ -55,7 +58,6 @@ export declare class DocumentFragmentELEM extends BaseELEM {
 export declare class NotationELEM extends BaseELEM {
     nodeType: number;
 }
-export declare const getELEM: (nname: string | BaseELEM | Node, attrs?: AttrObject, inner?: string, style?: StyleObject) => BaseELEM;
 declare class ELEMList extends MapList<BaseELEM> {
     getInstance(e: Node): BaseELEM | undefined;
 }
@@ -64,32 +66,32 @@ export declare class ELEM extends BaseELEM {
     parent: ELEM | null;
     e: HTMLElement;
     children: ELEMList;
-    constructor(nname?: string, attrs?: AttrObject, inner?: string, style?: StyleObject);
-    static create(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): ELEM;
-    setAttrs(attrs: AttrObject): void;
-    setStyle(style: StyleObject): void;
+    constructor(nname?: string | Falsy, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy);
+    static create(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
+    setAttrs(attrs: AttrObject): this;
+    setStyle(style: StyleObject): this;
     setInner(inner: string): this;
-    push_back(elem: BaseELEM): BaseELEM;
-    push_back(e: Node): BaseELEM;
-    push_back(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    push_back<T extends BaseELEM>(elem: T): T;
+    push_back<T extends Node>(elem: T): NodeTypeMap<T>;
+    push_back(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     pop_back(): BaseELEM | undefined;
-    push_front(elem: BaseELEM): BaseELEM;
-    push_front(e: Node): BaseELEM;
-    push_front(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    push_front<T extends BaseELEM>(elem: T): T;
+    push_front<T extends Node>(elem: T): NodeTypeMap<T>;
+    push_front(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     pop_front(): BaseELEM | undefined;
-    attr(key: string | AttrObject, value: string): this | undefined;
-    style(key: string | StyleObject, value: string): void;
+    attr(key: string | AttrObject, value: string): this;
+    style(key: string | StyleObject, value: string): this;
     removeChild(elem: BaseELEM): this;
-    insertBefore(elem1: BaseELEM, elem2: BaseELEM): BaseELEM;
-    insertBefore(elem: BaseELEM): BaseELEM;
-    insertBefore(e: Node): BaseELEM;
-    insertBefore(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
-    insertAfter(elem1: BaseELEM, elem2: BaseELEM): BaseELEM;
-    insertAfter(elem: BaseELEM): BaseELEM;
-    insertAfter(e: Node): BaseELEM;
-    insertAfter(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
-    replaceChild(elem: BaseELEM, rep: BaseELEM): BaseELEM;
-    replaceInPlace(elem: BaseELEM): void;
+    insertBefore<T extends BaseELEM>(newNode: T, reference: BaseELEM): T;
+    insertBefore<T extends BaseELEM>(elem: T): T;
+    insertBefore<T extends Node>(elem: T): NodeTypeMap<T>;
+    insertBefore(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
+    insertAfter<T extends BaseELEM>(reference: BaseELEM, newNode: T): T;
+    insertAfter<T extends BaseELEM>(elem: T): T;
+    insertAfter<T extends Node>(elem: T): NodeTypeMap<T>;
+    insertAfter(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
+    replaceChild<T extends BaseELEM>(elem: BaseELEM, rep: T): T;
+    replaceInPlace<T extends BaseELEM>(elem: T): T;
     on(evt: string, cb: Callback): Callback;
     off(evt: string, cb: Callback): Callback;
     once(evt: string): {
@@ -109,15 +111,15 @@ export declare class ELEM extends BaseELEM {
     get next(): BaseELEM | undefined;
     get head(): BaseELEM | undefined;
     get tail(): BaseELEM | undefined;
-    add(elem: BaseELEM): BaseELEM;
-    add(e: Node): BaseELEM;
-    add(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
-    push(elem: BaseELEM): BaseELEM;
-    push(e: Node): BaseELEM;
-    push(nname: string, attrs?: AttrObject, inner?: string, style?: StyleObject): BaseELEM;
+    add<T extends BaseELEM>(elem: T): T;
+    add<T extends Node>(elem: T): NodeTypeMap<T>;
+    add(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
+    push<T extends BaseELEM>(elem: T): T;
+    push<T extends Node>(elem: T): NodeTypeMap<T>;
+    push(nname: string, attrs?: AttrObject | Falsy, inner?: string | Falsy, style?: StyleObject | Falsy): ELEM;
     pop(): BaseELEM | undefined;
-    class(classname: string): void;
-    id(id: string): void;
+    class(classname: string): this;
+    id(id: string): this;
 }
 export declare const CSS: {
     css: string;
